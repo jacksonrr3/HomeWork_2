@@ -8,6 +8,7 @@
 #include <tuple>
 #include <algorithm>
 
+
 using ip_addr = std::vector<int>;
 using ip_pool = std::multiset<ip_addr, std::greater<>>;
 // ("",  '.') -> [""]
@@ -83,15 +84,15 @@ void filter_any(const ip_pool& pool, int a) {
 
 int main(int argc, char const *argv[])
 {
-	//ввод данных из файла во время отладки
+	//ГўГўГ®Г¤ Г¤Г Г­Г­Г»Гµ ГЁГ§ ГґГ Г©Г«Г  ГўГ® ГўГ°ГҐГ¬Гї Г®ГІГ«Г Г¤ГЄГЁ
 	std::ifstream test_in;
 	test_in.open("C:/Users/Evgeniy/source/repos/HomeWork1_2/ip_filter_3.tsv");
 	
 		try
 		{
-			ip_pool ip_pool; //стркутура данных, содержащая ip-адреса в порядке убывания.
+			ip_pool ip_pool; //Г±ГІГ°ГЄГіГІГіГ°Г  Г¤Г Г­Г­Г»Гµ, Г±Г®Г¤ГҐГ°Г¦Г Г№Г Гї ip-Г Г¤Г°ГҐГ±Г  Гў ГЇГ®Г°ГїГ¤ГЄГҐ ГіГЎГ»ГўГ Г­ГЁГї.
 
-			for (std::string line; std::getline(test_in, line);)  //изменить test_in на std::cin
+			for (std::string line; std::getline(test_in, line);)  //ГЁГ§Г¬ГҐГ­ГЁГІГј test_in Г­Г  std::cin
 			{
 				auto v1 = std::move(split(line, '\t'));
 				auto v2 = std::move(split(v1.at(0), '.'));
