@@ -69,8 +69,8 @@ int main([[maybe_unused]]int argc, char const *argv[])
       
 			for (std::string line; std::getline(std::cin, line);)  
 			{
-				auto v1 = std::move(split(line, '\t'));
-				auto v2 = std::move(split(v1.at(0), '.'));
+				auto v1 = (split(line, '\t'));
+				auto v2 = (split(v1.at(0), '.'));
 			 	ip_pool.emplace(ip_addr{ std::stoi(v2[0]), std::stoi(v2[1]), std::stoi(v2[2]), std::stoi(v2[3])});
 			}
 
