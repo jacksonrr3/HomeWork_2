@@ -60,7 +60,7 @@ void filter_any(const ip_pool& pool, int a) {
 	}
 }
 
-int main(int argc, char const *argv[])
+int main([[maybe_unused]]int argc, char const *argv[])
 {
 		
 		try
@@ -102,4 +102,5 @@ int main(int argc, char const *argv[])
 		}
     return 0;
 }
+
 
