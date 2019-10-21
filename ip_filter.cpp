@@ -34,12 +34,14 @@ std::vector<std::string> split(const std::string &str, char d)
 	return r;
 }
 
-void print_ip_addr(const ip_addr& ip) {
+void print_ip_addr(const ip_addr& ip) 
+{
 	std::cout << ip[0] << "." << ip[1] << "." << ip[2] << "." << ip[3] << std::endl;
 }
 
 template <typename...Args>
-void filter(const ip_pool& pool, Args...args) {
+void filter(const ip_pool& pool, Args...args) 
+{
 	ip_addr temp = { args... }; 	
 	
 	//поиск итератора на первый элемент последовательности подходящих по условию фильтра элементов
@@ -52,14 +54,18 @@ void filter(const ip_pool& pool, Args...args) {
 		[](auto b, auto a) {return !((std::equal(a.begin(), a.begin() + sizeof...(args), b.begin())) || (a > b));});
 	
 	//вывод отфильтрованных элементов
-	for (;it_start != it_finish; ++it_start) {
+	for (;it_start != it_finish; ++it_start) 
+	{
 		print_ip_addr(*it_start);
 	}
 }
 
-void filter_any(const ip_pool& pool, int a) {
-	for (auto it : pool) {
-		if (std::any_of(it.begin(), it.end(), [a=a](auto vec) {return vec == a; })) {
+void filter_any(const ip_pool& pool, int a) 
+{
+	for (auto it : pool) 
+	{
+		if (std::any_of(it.begin(), it.end(), [a=a](auto vec) {return vec == a; })) 
+		{
 			print_ip_addr(it);
 		}
 	}
