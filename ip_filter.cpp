@@ -3,14 +3,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <fstream>
 #include <set>
-#include <tuple>
 #include <algorithm>
 
 using ip_addr = std::vector<int>;
-using ip_pool_reverse = std::multiset<ip_addr, std::greater<>>;
-using ip_pool = std::multiset<ip_addr>;
+using ip_pool = std::multiset<ip_addr, std::greater<>>;
+
 // ("",  '.') -> [""]
 // ("11", '.') -> ["11"]
 // ("..", '.') -> ["", "", ""]
@@ -20,7 +18,6 @@ using ip_pool = std::multiset<ip_addr>;
 std::vector<std::string> split(const std::string &str, char d)
 {
 	std::vector<std::string> r;
-
 	std::string::size_type start = 0;
 	auto stop = str.find_first_of(d);
 		
@@ -33,7 +30,6 @@ std::vector<std::string> split(const std::string &str, char d)
 	}
 
 	r.push_back(str.substr(start));
-
 	return r;
 }
 
@@ -43,27 +39,34 @@ void print_ip_addr(const ip_addr& ip) {
 
 template <typename...Args>
 void filter(const ip_pool& pool, Args...args) {
-	ip_addr temp = { args... };
-	auto it_start = std::upper_bound(pool.begin(), pool.end(), temp);
+	ip_addr temp = { args... }; 	
+	
+	//поиск итератора на первый элемент последовательности подходящих по условию фильтра элементов
+	auto it_start = std::lower_bound(pool.begin(), pool.end(), temp,
+		[](auto a, auto b) {return !((std::equal(a.begin(), a.begin() + sizeof...(args), b.begin())) || (a < b));});
 		if (it_start == pool.end()) { return; }
+		
+	//поиск итератора на последний элемент последовательности подходящих по условию фильтра элементов
 	auto it_finish = std::upper_bound(it_start, pool.end(), temp,
-		[](auto b, auto a) {return !(std::equal(a.begin(), a.begin() + sizeof...(args), b.begin())); });
-	ip_pool_reverse temp_pool(it_start, it_finish);
-	for (auto it : temp_pool) {
-		print_ip_addr(it);
+		[](auto b, auto a) {return !((std::equal(a.begin(), a.begin() + sizeof...(args), b.begin())) || (a > b));});
+	
+	//вывод отфильтрованных элементов
+	for (;it_start != it_finish; ++it_start) {
+		print_ip_addr(*it_start);
 	}
 }
 
 void filter_any(const ip_pool& pool, int a) {
-	for (auto ip = pool.rbegin(); ip != pool.rend(); ++ip) {
-		if (std::any_of(ip->begin(), ip->end(), [a=a](auto vec) {return vec == a; })) {	print_ip_addr(*ip);	}
+	for (auto it : pool) {
+		if (std::any_of(it.begin(), it.end(), [a=a](auto vec) {return vec == a; })) {
+			print_ip_addr(it);
+		}
 	}
 }
 
-int main([[maybe_unused]]int argc, char const *argv[])
+int main()
 {
-		
-		try
+	try
 		{
 			ip_pool ip_pool; 
       
@@ -75,11 +78,7 @@ int main([[maybe_unused]]int argc, char const *argv[])
 			}
 
 			// TODO reverse lexicographically sort
-
-			for (auto ip = ip_pool.rbegin(); ip != ip_pool.rend(); ++ip)
-			{
-				print_ip_addr(*ip);
-			}
+			for (auto it : ip_pool)	{print_ip_addr(it);}
 						
 			// TODO filter by first byte and output
 			// ip = filter(1)
@@ -93,7 +92,7 @@ int main([[maybe_unused]]int argc, char const *argv[])
 
 			// TODO filter by any byte and output
 			//ip = filter_any(46);
-		   filter_any(ip_pool, 46);
+			filter_any(ip_pool, 46);
 
 		}
 		catch (const std::exception &e)
