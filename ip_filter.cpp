@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <stdexcept>
 
 using ip_addr = std::vector<int>;
 using ip_pool = std::multiset<ip_addr, std::greater<>>;
@@ -67,38 +68,39 @@ void filter_any(const ip_pool& pool, int a) {
 int main()
 {
 	try
-		{
-			ip_pool ip_pool; 
+	{
+		ip_pool ip_pool; 
       
-			for (std::string line; std::getline(std::cin, line);)  
-			{
-				auto v1 = (split(line, '\t'));
-				auto v2 = (split(v1.at(0), '.'));
-			 	ip_pool.emplace(ip_addr{ std::stoi(v2[0]), std::stoi(v2[1]), std::stoi(v2[2]), std::stoi(v2[3])});
-			}
-
-			// TODO reverse lexicographically sort
-			for (auto it : ip_pool)	{print_ip_addr(it);}
-						
-			// TODO filter by first byte and output
-			// ip = filter(1)
-			filter(ip_pool, 1);
-
-			
-			// TODO filter by first and second bytes and output
-			// ip = filter(46, 70)
-			filter(ip_pool, 46, 70);
-			
-
-			// TODO filter by any byte and output
-			//ip = filter_any(46);
-			filter_any(ip_pool, 46);
-
-		}
-		catch (const std::exception &e)
+		for (std::string line; std::getline(std::cin, line);)  
 		{
-			std::cerr << e.what() << std::endl;
+			auto v1 = (split(line, '\t'));
+			auto v2 = (split(v1.at(0), '.'));
+		 	ip_pool.emplace(ip_addr{ std::stoi(v2[0]), std::stoi(v2[1]), std::stoi(v2[2]), std::stoi(v2[3])});
 		}
+
+		//выброс исключения и завершение программы при отсутствии входных данных
+		if (ip_pool.empty()) { throw std::runtime_error("No input data!"); }
+		
+		// TODO reverse lexicographically sort
+		for (auto it : ip_pool)	{print_ip_addr(it);}
+						
+		// TODO filter by first byte and output
+		// ip = filter(1)
+		filter(ip_pool, 1);
+
+		// TODO filter by first and second bytes and output
+		// ip = filter(46, 70)
+		filter(ip_pool, 46, 70);
+
+		// TODO filter by any byte and output
+		//ip = filter_any(46);
+		filter_any(ip_pool, 46);
+
+		}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
     return 0;
 }
 
