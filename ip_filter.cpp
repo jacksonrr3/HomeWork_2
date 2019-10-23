@@ -48,7 +48,15 @@ void filter(const ip_pool& pool, Args...args)
 	auto it_start = std::lower_bound(pool.begin(), pool.end(), temp,
 		[](auto a, auto b) {return !((std::equal(a.begin(), a.begin() + sizeof...(args), b.begin())) || (a < b));});
 		if (it_start == pool.end()) { return; }
+	
+	//вывод элементов пока совпадение с условием фильтра и проверка на выход на границу контейнера
+	do {
+		print_ip_addr(*it_start);
+		if (++it_start == pool.end()) { return; }
+	} 
+	while (std::equal(it_start->begin(), it_start->begin() + sizeof...(args), temp.begin()));
 		
+	/*	//предыдущий вариант реализации фильтра, с поиском итераторов на первый и последний элемент подходящие по свойствам.
 	//поиск итератора на последний элемент последовательности подходящих по условию фильтра элементов
 	auto it_finish = std::upper_bound(it_start, pool.end(), temp,
 		[](auto b, auto a) {return !((std::equal(a.begin(), a.begin() + sizeof...(args), b.begin())) || (a > b));});
@@ -58,6 +66,7 @@ void filter(const ip_pool& pool, Args...args)
 	{
 		print_ip_addr(*it_start);
 	}
+	*/
 }
 
 void filter_any(const ip_pool& pool, int a) 
