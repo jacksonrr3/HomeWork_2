@@ -6,8 +6,10 @@
 #include <set>
 #include <algorithm>
 #include <stdexcept>
+#include <array>
 
-using ip_addr = std::vector<int>;
+using ip_addr = std::array<int, 4>;		//после лекции 24.10.2019 изменил vector на array
+
 using ip_pool = std::multiset<ip_addr, std::greater<>>;
 
 // ("",  '.') -> [""]
@@ -42,11 +44,13 @@ void print_ip_addr(const ip_addr& ip)
 template <typename...Args>
 void filter(const ip_pool& pool, Args...args) 
 {
-	ip_addr temp = { args... }; 	
+	//ip_addr temp = { args... }; 	
+	std::array<int, sizeof...(args)> temp = { args... };
 	
 	//поиск итератора на первый элемент последовательности подходящих по условию фильтра элементов
 	auto it_start = std::lower_bound(pool.begin(), pool.end(), temp,
-		[](auto a, auto b) {return !((std::equal(a.begin(), a.begin() + sizeof...(args), b.begin())) || (a < b));});
+		[](auto a, auto b) {return !((std::equal(a.begin(), a.begin() + sizeof...(args), b.begin())) || 
+					     (std::lexicographical_compare(a.begin(), a.begin() + sizeof...(args), b.begin(), b.end())));});
 		if (it_start == pool.end()) { return; }
 	
 	//вывод элементов пока совпадение с условием фильтра и проверка на выход на границу контейнера
@@ -73,10 +77,7 @@ void filter_any(const ip_pool& pool, int a)
 {
 	for (auto it : pool) 
 	{
-		if (std::any_of(it.begin(), it.end(), [a=a](auto vec) {return vec == a; })) 
-		{
-			print_ip_addr(it);
-		}
+		if (std::any_of(it.begin(), it.end(), [a=a](auto vec) {return vec == a; })) {print_ip_addr(it);}
 	}
 }
 
@@ -90,6 +91,8 @@ int main()
 		{
 			auto v1 = (split(line, '\t'));
 			auto v2 = (split(v1.at(0), '.'));
+			//выброс исключения и завершение программы при не коррекных входных
+			if (v2.size() != 4) { throw std::runtime_error("Wrong input data!"); }
 		 	ip_pool.emplace(ip_addr{ std::stoi(v2[0]), std::stoi(v2[1]), std::stoi(v2[2]), std::stoi(v2[3])});
 		}
 
